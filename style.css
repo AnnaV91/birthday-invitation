@@ -1,0 +1,142 @@
+
+        body {
+            background-color: #fde6d9;
+            text-align: center;
+            font-style: normal;
+        }
+        
+        h1{ 
+            font-family: "mynerve", serif;
+            text-align: center;
+            font-size: 30px;
+            margin: 20px;
+        }
+        
+       
+        h2 {
+            font-family: montserrat, sans-serif;
+            font-size: 20px;
+            font-weight: 200; 
+        }
+
+        h3 {
+            font-family: montserrat, sans-serif;
+            font-size: 16px;
+            font-weight: 200px;
+        }
+
+        p {
+            font-family: montserrat, sans-serif;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .p_center {
+            text-align: center;
+            margin: 20px;
+        }
+
+
+        .header img {
+            width: 200px;
+            height: auto;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .location {
+            gap: 30px;
+            margin: 30px;
+        }
+
+        @media screen and (max-width: 600px) {
+            .header , .location {
+              display: flex;
+              flex-direction: column;
+            }
+          }
+        
+        @media screen and (min-width: 601px) {
+            .header , .location {
+              display: flex;
+              flex-direction: row;
+            }
+          }
+       
+        button {
+            font-family: montserrat, sans-serif;
+            font-size: 20px;
+            padding: 10px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #fde6d9;
+            box-shadow: 2px 2px 4px 0px rgba(70, 9, 9, 0.2);
+        }
+
+        button:hover {
+            box-shadow: -2px -2px 4px 0px rgb(70, 9, 9, 0.2);
+        }
+  
+        button.active {
+            background-color: black;
+            color: #fde6d9;
+            cursor: default; /* Optional: deaktiviert den Hover-Effekt */
+        }
+
+        .yes {
+            background-color: #fde6d9;
+            color: black;
+            
+        }
+
+        .no {
+            background-color: #fde6d9;
+            color: black;
+        }
+
+        .guest-list {
+            font-family: montserrat, sans-serif;
+            font-size: 14px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        label {
+            font-family: montserrat, sans-serif;
+            font-size: 16px;
+        }
+
+
+        input[type="text"] {
+            background-color:#fde6d9;
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+       
+
+        .address {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+        
