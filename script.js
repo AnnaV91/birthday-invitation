@@ -1,9 +1,12 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+/*
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { collection, addDoc } from "firebase/firestore"; 
-
+*/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCY86JwynSAJb8pTYXC0eg5jKE9XpkABho",
@@ -16,22 +19,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-try {
-  const docRef = await addDoc(collection(db, "users"), {
-    first: "Ada",
-    last: "Lovelace",
-    born: 1815
-  });
-  console.log("Document written with ID: ", docRef.id);
-} catch (e) {
-  console.error("Error adding document: ", e);
-}
+const firestore = getFirestore(app);
+const guestsCollection = collection(firestore, "guests");
 
 
 const guests = new Set(); // Set to store unique guest names
 
-function handleYes() {
+export async function handleYes() {
     const content = document.getElementById('content');
     const header = document.getElementById('header');
 
@@ -44,11 +38,10 @@ function handleYes() {
         <div class="header" id="header">
             ${header.innerHTML}
         </div>
-        <p class="p_center">(In case you want to delete your name again: just put your name in the input field again)</p>
         <button class="yes" onclick="handleYes()">Yes!</button>
         <button class="no" onclick="handleNo()">No.</button>
         <input type="text" id="guestName" placeholder="Put your name (& your +1) on the guest list">
-        <button onclick="addOrRemoveGuest()">Submit</button>
+        <button onclick="addGuest()">Submit</button>
          <div class="location">
                 
                 <div class="address">
@@ -71,20 +64,13 @@ function handleYes() {
         </div>
     `;
     setActiveButton('yes');
-    loadGuestsFromURL(); // Load guests from URL
-    updateGuestList();
+    
+    await loadGuestsFromDB(); // Load guests from URL
+    renderGuestList();
 }
+window.handleYes = handleYes
 
-function createGuestList(guests) {
-    return `
-        <div class="guest-list">
-            <h2>Current guest list (<span id="guestCount">${guests.size}</span>)</h2>
-            <div id="guestListContent"></div>
-        </div>
-    `
-}
-
-function handleNo() {
+export function handleNo() {
     const content = document.getElementById('content');
     const header = document.getElementById('header');
 
@@ -105,9 +91,10 @@ function handleNo() {
         </div>
     `;
     setActiveButton('no');
-    loadGuestsFromURL(); // Load guests from URL
-    updateGuestList();
+    loadGuestsFromDB(); // Load guests from URL
+    renderGuestList();
 }
+window.handleNo = handleNo
 
 function setActiveButton(buttonType) {
     const yesButton = document.querySelector('.yes');
@@ -122,7 +109,7 @@ function setActiveButton(buttonType) {
     }
 }
 
-function addOrRemoveGuest() {
+export function addGuest() {
     const nameInput = document.getElementById('guestName');
     const name = nameInput.value.trim();
 
@@ -131,22 +118,55 @@ function addOrRemoveGuest() {
         return;
     }
 
-    if (guests.has(name)) {
-        // Remove the guest if they already exist
-        if (confirm(`Remove ${name} from the guest list?`)) {
-            guests.delete(name);
-        }
-    } else {
-        // Add the guest
-        guests.add(name);
-    }
+    // Add the guest
+    addDoc(guestsCollection, {
+        name: name
+    })
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+        guests.add(name)
+        renderGuestList()
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
 
     nameInput.value = '';
-    updateURLWithGuests();
-    updateGuestList();
+}
+window.addGuest = addGuest
+
+async function removeGuest(name) {
+    // Remove the guest if they already exist
+    removalConfirmed = confirm(`Remove ${name} from the guest list?`)
+    if (!removalConfirmed) {
+        return
+    }
+    // Query Firestore to find the user document
+    const q = query(guestsCollection, where("name", "==", name));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        // If a user with the specified email exists, get the document reference
+        querySnapshot.forEach((docSnapshot) => {
+            // Get the document reference
+            const docRef = docSnapshot.ref;
+            
+            // Delete the document from Firestore
+            deleteDoc(docRef)
+                .then(() => {
+                    console.log(`Guest with name ${name} deleted successfully.`);
+                })
+                .catch((error) => {
+                    console.error("Error deleting guest: ", error);
+                });
+        });
+    } else {
+        console.log(`No guest found with email ${name}`);
+    }
 }
 
-function updateGuestList() {
+
+function renderGuestList() {
     const guestListContent = document.getElementById('guestListContent');
     const guestCount = document.getElementById('guestCount');
 
@@ -159,27 +179,30 @@ function updateGuestList() {
 
     guestCount.textContent = guests.size;
 }
-
+/*
 function updateURLWithGuests() {
     const guestArray = Array.from(guests); // Convert Set to Array
     const guestParam = encodeURIComponent(guestArray.join(',')); // Encode guests as a single string
     const newURL = `${window.location.origin}${window.location.pathname}?guests=${guestParam}`;
     window.history.pushState({}, '', newURL); // Update the URL without reloading the page
 }
-
-function loadGuestsFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const guestParam = urlParams.get('guests');
-
-    if (guestParam) {
-        const guestArray = decodeURIComponent(guestParam).split(','); // Decode and split guest names
-        guests.clear();
-        guestArray.forEach(guest => guests.add(guest.trim()));
+*/
+async function loadGuestsFromDB() {
+    try {
+        const querySnapshot = await getDocs(guestsCollection);
+        querySnapshot.forEach((doc) => {
+            guests.add(doc.data().name);
+        });
+        console.log("Guests loaded: ", guests);
+    } catch (error) {
+        console.error("Error loading guests: ", error);
     }
 }
 
+async function init() {
+    await loadGuestsFromDB();
+    renderGuestList();
+}
+
 // Load guests from URL on initial page load
-window.onload = () => {
-    loadGuestsFromURL();
-    updateGuestList();
-};
+window.onload = init
