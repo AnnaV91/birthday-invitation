@@ -30,7 +30,7 @@ export async function handleYes() {
     const header = document.getElementById('header');
 
     header.innerHTML = `
-        <h1>Nice! You will be attending Anna's birthday on 01.02.25!<br><br>It starts at 17:00. Feel free to bring Snacks or Drinks.</h1>
+        <h1>Nice! You will be attending Anna's birthday on 01.02.25 at 17:00!<br><br>Feel free to bring Snacks or Drinks.</h1>
         <img src="assets/yes_selected.png" alt="yes selected">
     `;
 
