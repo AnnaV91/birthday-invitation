@@ -40,7 +40,7 @@ export async function handleYes() {
         </div>
         <button class="yes" onclick="handleYes()">Yes!</button>
         <button class="no" onclick="handleNo()">No.</button>
-        <input type="text" id="guestName" placeholder="Put your name (& your +1) on the guest list">
+        <input type="text" id="guestName" placeholder="Put your name (& your +1 separately) on the guest list">
         <button onclick="addGuest()">Submit</button>
          <div class="location">
                 
